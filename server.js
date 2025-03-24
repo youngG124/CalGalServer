@@ -34,6 +34,25 @@ app.post('/upload/:date', upload.single('image'), (req, res) => {
     res.json({ message : 'upload successfule', date });
 });
 
+app.delete('/delete/:date', (req, res) => {
+    const { date } = req.params;
+
+    const filePath = path.join(__dirname, 'uploads', `${date}.png`);
+
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            if (err.code === 'ENOENT') {
+                return res.status(404).json({ message : 'file not exists'});
+            } else {
+                console.log(err);
+                return res.status(500).json({ message : 'error occured while deleting file'});
+            }
+        }
+
+        res.json({ message : 'deleting file complete', date});
+    })
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
