@@ -17,11 +17,11 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (cb) {
         cb(null, 'uploads');
     },
     filename : function (req, file, cb) {
-        const { date } = req.body;
+        const date = req.params.date;
         const ext = path.extname(file.originalname);
         cb(null, `${date}${ext}`);
     }
@@ -29,10 +29,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.post('/upload', upload.single('image'), (req, res) => {
-    const { date } = req.body;
-    const fileUrl = `http://localhost:${PORT}/uploads/${req.file.filenmame}`;
-    res.json({ message : 'upload successfule', fileUrl, date });
+app.post('/upload/:date', upload.single('image'), (req, res) => {
+    const { date } = req.params;
+    res.json({ message : 'upload successfule', date });
 });
 
 app.listen(PORT, () => {
