@@ -51,22 +51,26 @@ app.get('/image/:date', (req, res) => {
 
 app.delete('/delete/:date', (req, res) => {
     const { date } = req.params;
+    const extensions = ['.png', '.jpg', '.jpeg'];
 
-    const filePath = path.join(__dirname, 'uploads', `${date}.png`);
+    let deleted = false;
 
-    fs.unlink(filePath, (err) => {
-        if (err) {
-            if (err.code === 'ENOENT') {
-                return res.status(404).json({ message : 'file not exists'});
-            } else {
-                console.log(err);
-                return res.status(500).json({ message : 'error occured while deleting file'});
-            }
+    for (const ext of extensions) {
+        const filePath = path.join(__dirname, 'uploads', `${date}${ext}`);
+        if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        deleted = true;
+        break;
         }
+    }
 
-        res.json({ message : 'deleting file complete', date});
-    })
+    if (deleted) {
+        res.json({ message: 'Deleting file complete', date });
+    } else {
+        res.status(404).json({ message: 'File not found for given date' });
+    }
 });
+  
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
