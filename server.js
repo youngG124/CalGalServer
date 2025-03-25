@@ -34,6 +34,21 @@ app.post('/upload/:date', upload.single('image'), (req, res) => {
     res.json({ message : 'upload successfule', date });
 });
 
+// 날짜 기반 이미지 반환
+app.get('/image/:date', (req, res) => {
+    const date = req.params.date;
+    const extensions = ['.png', '.jpg', '.jpeg'];
+
+    for (const ext of extensions) {
+        const fullPath = path.join(uploadDir, `${date}${ext}`);
+        if (fs.existsSync(fullPath)) {
+        return res.sendFile(fullPath);
+        }
+    }
+
+    res.status(404).send('Image not found');
+});
+
 app.delete('/delete/:date', (req, res) => {
     const { date } = req.params;
 
