@@ -29,6 +29,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+app.get('/', (req, res) => {
+    res.send('CalGal backend running!');
+  });  
+
 app.post('/upload/:date', upload.single('image'), (req, res) => {
     const { date } = req.params;
     res.json({ message : 'upload successfule', date });
@@ -72,6 +76,6 @@ app.delete('/delete/:date', (req, res) => {
 });
   
 
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
